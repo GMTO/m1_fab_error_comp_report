@@ -1,0 +1,17 @@
+# --- Pictures ---
+pictures/*-eps-converted-to.pdf
+pictures/*.fig
+# --- LaTeX ---
+*.aux
+*.bbl
+*.bcf
+*.lof
+*.log
+*.lot
+*.toc
+*.out
+*.run.xml
+*.synctex.gz
+# --- PDFs ---
+m1_polishing_comp.pdf
+IM_meeting_PolishingError_Mitigation.pdf
