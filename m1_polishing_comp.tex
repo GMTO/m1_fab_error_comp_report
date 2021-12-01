@@ -85,26 +85,29 @@
 \section{Purpose}
 \label{sec:purpose}
 
-This document describes an optimization approach to compute polishing error compensation forces. The strategy is based on a two--objective cost function. One is the residual surface error, and the other is linked to the tension induced by compensation. Our goal is to show that it can be advantageous to use the proposed method to compensate for mirror shape error characterized a priori.
+This document describes an optimization approach to compute polishing error compensation forces. The strategy is based on a two--objective cost function. One is the residual surface error, and the other is linked to the stress induced by compensation. Our goal is to show that it can be advantageous to use the proposed method to compensate for mirror shape error characterized a priori.
 
 
 
 \section{Introduction}
 \label{sec:introduction}
 
-The primary mirror active support incorporates pneumatic force actuators to hold the mirror and to control its surface. This task is accomplished by applying a controlled force vector to the back surface of the mirrors through pucks that are bonded to the mirror back surface. These support actuators are also used to correct for mirror deformations that are created by the effect of gravity, wind and thermal disturbances.
+The primary mirror (M1) active support incorporates pneumatic force actuators to hold the mirror and to control its surface. This task is accomplished by applying a controlled force vector to the back surface of the mirrors through pucks that are bonded to the mirror back surface. These support actuators are also used to correct for mirror deformations that are created by the effect of gravity, wind and thermal disturbances.
 
 An outer ring of single--axis actuators and another set of triple--axis ones composes the actuator array. %%Figure~\ref{fig:supportActuators} illustrates the layout of single and triple--axis support actuators.
 The first type applies forces in the normal direction to the back surface of the mirror, while triple--axis actuators can apply forces in $3$ directions. There are $80$ single and $85$ triple actuators for the outer segments (a total of $n_a=165$ actuators with $n_u = 335$ degrees of freedom) and $n_a=154$ actuators for the center segment, providing $n_u = 306$ degrees of freedom through $78$ single and $76$ triple actuators.
 
 
-The fabrication shape error of M1 is one of the most significant contributors to the image quality error. The current best estimate (CBE) assumes the residual shape error after the correction obtained with the linear combination of the right singular vectors relative to the first $27$ bending modes \cite[Section 6.3.1.1]{GMT_DOC_04680}. That method is hereafter referred to as the baseline. The resulting PSSN is $0.9566$ and $0.9895$ at \SI{0.5}{\micron} and \SI{1.65}{\micron}, respectively. A full description of the simulations can be found in \cite{GMT_DOC_04637}.
+The fabrication shape error of M1 is one of the most significant contributors to the image quality error. The current best estimate (CBE) assumes the residual shape error after the correction obtained with the linear combination of the right singular vectors relative to the first $27$ bending modes \cite[Section 6.3.1.1]{GMT_DOC_04680}. That method is hereafter referred to as the baseline compensation approach. %The resulting PSSN is $0.9566$ and $0.9895$ at \SI{0.5}{\micron} and \SI{1.65}{\micron}, respectively. A full description of the simulations can be found in \cite{GMT_DOC_04637}.
 
-This technical note proposes a two--objective optimization approach to compute polishing error compensation forces. Simulation results indicate that the open--loop compensation using those forces can significantly improve the image quality for the Natural Seeing (NS) observation mode. The results also indicates that the mirror tension induced by those forces is lower that observed with the baseline correction.%
-It should be stressed that the algorithm described here to cope with the polishing error is a particular case of a method originally developed to compute the gravity support forces (refer to \cite{Romano2020a}).
+This technical note proposes a two--objective optimization approach to compute polishing error compensation forces. Simulation results are encouraging.  Besides improving the M1 optical surface, compared to the baseline compensation strategy, the analyses also indicate that the stress induced by the forces computed using the proposed method is lower than that observed with the baseline approach.%
+It should be stressed that the algorithm described here to cope with the polishing error is a particular case of a method originally developed to compute the gravity support forces, which is discussed in detail in \cite{Romano2020a}.
+
+%indicate that the open--loop compensation using those forces can improve the image quality for the Natural Seeing (NS) observation mode. 
+
+%The simulation results indicate some benefits  There are indications that the obtained compensation forces induce less stress on the mirror glass.
 
 
-%This report presents a least--squares optimization (LSO) approach to compute the support actuator forces. Section~\ref{sec:ls_FdistAlg} describes the force balance algorithm. Section~\ref{sec:simResults} shows the performance of the proposed approach from the simulation of gravity load on different zenith angles. Results in case of actuator failures are also discussed. Concluding remarks are drawn in Section~\ref{sec:conclusions}.
 
 
 
@@ -313,7 +316,8 @@ The most significant surface error improvement (with respect to the correction c
 \caption{\textsf{S7} maximum neighborhood differential force and local stress.}
 \label{fig:s7_ng_sigma}
 \end{figure}
-The differential force can be seen as an indication of mirror glass tension\todo{Do you agree with that statement?}. Therefore, we compute the maximum differential resultant force with respect to the  neighborhood of each actuator. The approximate local stress $\sigma$ produced by the $k$th actuator is given by \cite[Subsection~4.1.6]{gmtM1req}
+The differential force can be seen as an indication of mirror glass stress. %\todo{Do you agree with that statement?}.
+Therefore, we compute the maximum differential resultant force with respect to the  neighborhood of each actuator. The approximate local stress $\sigma$ produced by the $k$th actuator is given by \cite[Subsection~4.1.6]{gmtM1req}
 \[\sigma_k = \sqrt{w_\text{ax}^2 f_{z_k}^2 + w_\text{lat}^2\left(f_{x_k}^2 + f_{y_k}^2\right)}, \]
 %
 where the axial and lateral weights lateral force weights are
@@ -333,19 +337,48 @@ Figure~\ref{fig:s1_ng_sigma} shows that the baseline correction leads to a gradi
 In summary, the previous results confirm that besides achieving a significant surface error mitigation, the proposed optimization method reduces the local stress and the differential force over the mirror, particularly concerning \textsf{S1} and \textsf{S7} --- in those cases, there is considerable room for further improvement. The complementary simulation results reported in Appendix~\ref{sec:alternative_tuning_res} illustrate those points.
 
 
-At last, we evaluate the impact of the compensated surface shapes on the image quality in the telescope exit pupil. It is fair to expect that that the same quality will carry through the fabrication shapes of the upcoming mirrors. So, as in~\cite{GMT_DOC_04637}, we assume the \textsf{S2} polishing error map for segments \textsf{S2}--\textsf{S7}.
-
-
-Using the algorithm of Section~\ref{sec:opt_method}, the resulting Normalized Point Source Sensitivity (PSSN\footnote{
+At last, we evaluate the impact of the compensated surface shapes on the image quality in the telescope exit--pupil. It is fair to expect that that the same quality will carry through the fabrication shapes of the upcoming mirrors. So, as in~\cite{GMT_DOC_04637}, we assume the \textsf{S2} polishing error map for segments \textsf{S2}--\textsf{S7}. Using the algorithm of Section~\ref{sec:opt_method}, the resulting Normalized Point Source Sensitivity (PSSN\footnote{
 For the Natural Seeing (NS) operating mode, in which adaptive optics corrections are not performed, the closer to 1, the better is the image. One is referred to \cite[Section~3]{GMT_DOC_04680} for a formal definition of the PSSN.
-}) is $0.9680$\todo{Update PSSN!} 
-at \SI{0.5}{\micron}, which is a relevant improvement compared to the $0.9563$ obtained  after the first 27 bending modes are filtered from the polishing error map of the primary mirror segments.
+}) is $0.9703$ %\todo{Update PSSN!} 
+at \SI{0.5}{\micron} (V--band), which slightly improves the $0.9694$ obtained after the first 27 bending modes are filtered from the polishing error map of the primary mirror segments. Figure~X illustrates the phase screen at the exit--pupil provided by each of the polishing error compensation methods.
+\begin{figure}[!htb]
+\begin{subfigure}[b]{0.452\textwidth}
+\centering
+\includegraphics[width=\textwidth]{./pictures/exitpupil_27BMcomp.png}
+\caption{Wavefront--error when the compensation forces filter the first 27 bending modes.\\}
+%\label{fig:S1s_RMSE}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.545\textwidth}
+\centering
+\includegraphics[width=\textwidth]{./pictures/exitpupil_rho1e16.png}
+\caption{Phase screen at the exit--pupil when the polishing error is compensated using the forces computed by the proposed optimization algorithm.}
+%\label{fig:S2s_RMSE}
+\end{subfigure}
+\caption{Phase screen induced by the residual M1 fabrication errors.}
+\label{fig:exitpupil}
+\end{figure}
 
 
-
-
-
-
+%\begin{figure}[!htb]
+%\centering
+%\begin{subfigure}[b]{\textwidth}
+%\centering
+%\includegraphics[width=0.5\textwidth]{./pictures/exitpupil_27BMcomp.png}
+%\caption{Wavefront--error when the compensation forces filter the first 27 bending modes.\\}
+%%\label{fig:S1s_RMSE}
+%\end{subfigure}
+%\\
+%\hspace{15pt}
+%\begin{subfigure}[b]{\textwidth}
+%\centering
+%\includegraphics[width=0.65\textwidth]{./pictures/exitpupil_rho1e16.png}
+%\caption{Phase screen at the exit--pupil when the polishing error is compensated using the forces computed by the proposed optimization algorithm.}
+%%\label{fig:S2s_RMSE}
+%\end{subfigure}
+%\caption{Phase screen induced by the residual M1 fabrication errors.}
+%\label{fig:exitpupil}
+%\end{figure}
 
 
 
@@ -353,9 +386,10 @@ at \SI{0.5}{\micron}, which is a relevant improvement compared to the $0.9563$ o
 \label{sec:conclusions}
 
 
-An optimization method is developed to compute forces to correct surface fabrication errors through open-loop (offset) commands. The simulation results are promising. Besides improving the optical surface shape substantially, compared to the baseline compensation that has been considered so far, there are indications that the obtained compensation forces induce less tension on the mirror glass.
+An optimization method is developed to compute forces to correct surface fabrication errors through open--loop (offset) commands. Although there are still advantages compared to the correction based on the first 27 bending modes, particularly regarding the impact of the compensation forces in the mirror glass, the significant optical surface shape improvements do not translate into a PSSN enhancement of the same magnitude.
 
-This study assumes that fabrication errors and gravity print-through are addressed separately. However,  it can be even more advantageous to incorporate fabrication errors in a surface deformation model induced by gravity and then, to handle the computation of the M1 support actuator forces in a unified approach.
+
+This study assumes that fabrication errors and gravity print--through are addressed separately. However, it can be more advantageous to incorporate fabrication errors in a surface deformation model induced by gravity and then, to handle the computation of the M1 support actuator forces using a unified approach.
 
 
 \printbibliography
@@ -383,9 +417,9 @@ Table~\ref{tab:altrho_results} summarizes the results obtained. To ease comparis
 \end{tabular}
 \end{table}
 
-The new tuning improves the \textsf{S1}, \textsf{S2}, and \textsf{S7} residual errors obtained with the correction based on the first $27$ bending modes by a factor of $30.8$\%, $13.2$\%, and $14.1$\%, respectively. The proposed algorithm alternative tuning reduces the maximum differential force and local stress peaks of the baseline correction for segments \textsf{S1} and \textsf{S7}. In contrast, even the more conservative \textsf{S2} retuning leads to similar local stress peak values and worsens the differential force profile (see Figure~\ref{fig:s2_altrho_results}).
+The new tuning improves the \textsf{S1}, \textsf{S2}, and \textsf{S7} residual errors obtained with the correction based on the first $27$ bending modes by a factor of $30.8$\%, $13.2$\%, and $14.1$\%, respectively. The alternative tuning still reduces the maximum differential force and local stress peaks of the baseline correction for segments \textsf{S1} and \textsf{S7}. In contrast, even the more conservative \textsf{S2} retuning leads to similar local stress peak values and marginally worsens the differential force profile (see Figure~\ref{fig:s2_altrho_results}). The resulting PSSN in this case is $0.9706$ at \SI{0.5}{\micron} (V--band).
 
-\todo[inline]{* * * Include PSSN info * * *}
+
 
 \begin{figure}[!p]
 \centering
