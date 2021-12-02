@@ -4,6 +4,7 @@ pictures/*.fig
 # --- LaTeX ---
 *.aux
 *.bbl
+*.blg
 *.bcf
 *.lof
 *.log
